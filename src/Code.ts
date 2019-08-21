@@ -245,7 +245,7 @@ function isTriggerEnable() {
     let botLog = botLogSheet.getDataRange().getValues().slice(1);
 
     let lastDateRow = botLog[botLog.length - 1];
-    if (!lastDateStr) {
+    if (!lastDateRow) {
         return true;
     };
     let lastDateStr = botLog[botLog.length - 1][0];
