@@ -1,10 +1,12 @@
+import { strict } from "assert";
+
 function logUsers() {
     getOnlineUsers();
     let sheet = SpreadsheetApp.getActive().getSheetByName("current users");
     let logSheet = SpreadsheetApp.getActive().getSheetByName("user log");
     let log = logSheet.getDataRange().getValues().slice(1);
     let onlineUsers = sheet.getDataRange().getValues().slice(1).reverse();
-    function update(log) {
+    function update(log: any[]) {
         logSheet.getRange(2, 1, log.length, log[0].length).setValues(log);
     };
 
@@ -48,11 +50,10 @@ function isTriggerEnable() {
     };
     let lastDateStr = botLog[botLog.length - 1][0];
     let lastDate = new Date(lastDateStr);
-    let now = new Date();
-    let holdTime = propertySheet.getRange(1, 4, 2, 1).getValues()[1][0];
+    let holdTime = new Date(propertySheet.getRange(1, 4, 2, 1).getValues()[1][0]);
     let epoch = new Date("Dec 30 1899 00:00:00");
-    let holdTimeMiliSec = holdTime - epoch;
-    let delta = now - lastDate;
+    let holdTimeMiliSec = holdTime.valueOf() - epoch.valueOf();
+    let delta = Date.now().valueOf() - lastDate.valueOf();
 
     let isTriggerEnable = delta > holdTimeMiliSec;
     return isTriggerEnable;
@@ -73,16 +74,15 @@ function getOnlineUsers() {
     let sheet = SpreadsheetApp.getActive().getSheetByName("current users");
 
     let statusies = get_local_timeline();
-    let table: string[] = [];
-    for (let index in statusies) {
-        let status = statusies[index];
-        table[index] = [status.account.acct, status.account.display_name, toJST(status.created_at)];
-    };
+    let table = statusies.map(
+        (status) => [status.account.acct, status.account.display_name, toJST(status.created_at)]
+    );
+
     let range = sheet.getRange(2, 1, statusies.length, table[0].length);
     range.setValues(table);
 }
 
-function updateTable(dateStr, tableStr) {
+function updateTable(dateStr: string, tableStr: string) {
     let date = new Date(dateStr);
     let hours = date.getHours() % 24;
     let table = tableStr ? JSON.parse(tableStr) : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -95,12 +95,13 @@ function getBotMessage() {
     let messageSheet = SpreadsheetApp.getActive().getSheetByName("bot message");
     let messageLines = messageSheet.getDataRange().getValues().slice(1);
     let greetingTable = propertySheet.getRange(2, 1, 24, 2).getValues();
-    let greetingMap = {};
+    let greetingMap: { [key: string]: any } = {};
     for (let index in greetingTable) {
-        greetingMap[greetingTable[index][0]] = greetingTable[index][1];
+        const key = new Date(greetingTable[Number(index)][0]).getHours().toString();
+        greetingMap[key] = greetingTable[Number(index)][1];
     };
 
-    let greeting = greetingMap[(new Date()).getHours()];
+    let greeting = greetingMap[(new Date()).getHours().toString()];
     let message = "";
     for (let index in messageLines) {
         message += messageLines[index][1] + "\n";

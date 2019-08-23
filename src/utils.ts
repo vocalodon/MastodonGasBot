@@ -9,7 +9,7 @@ function concatUrl(pre: string, post: string) {
     return url;
 }
 
-function toJST(dateStr) {
+function toJST(dateStr: string) {
     let date = new Date(dateStr);
     return Utilities.formatDate(date, "JST", "yyyy-MM-dd") + "T" + Utilities.formatDate(date, "JST", "HH:mm:ssZ");
 }

@@ -10,6 +10,22 @@ let auth = {
 
 interface OAuth2 {
     getRedirectUri(scriptID: string): string[];
+    createService(name: string): Service_;
+}
+interface Service_ {
+    setAuthorizationBaseUrl(authorizationBaseUrl: string): Service_;
+    setTokenUrl(tokenUrl: string): Service_;
+    setRefreshUrl(refreshUrl: string): Service_;
+    setClientId(clientId: string): Service_;
+    setClientSecret(clientSecret: string): Service_;
+    setCallbackFunction(callbackFunctionName: string): Service_;
+    setPropertyStore(propertyStore: GoogleAppsScript.Properties.Properties): Service_;
+    setScope(scope: string | Array<string>, optSeparator?: string): Service_;
+    hasAccess(): boolean;
+    getAuthorizationUrl(optAdditionalParameters?: Object): string;
+    handleCallback(callbackRequest: Object): boolean;
+    reset(): void;
+    getAccessToken(): string;
 }
 
 function doGet(request: any) {
