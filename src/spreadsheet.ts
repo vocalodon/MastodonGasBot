@@ -1,11 +1,12 @@
 import { strict } from "assert";
+import { networkInterfaces } from "os";
 
-function logUsers() {
+export function logUsers() {
     getOnlineUsers();
-    let sheet = SpreadsheetApp.getActive().getSheetByName("current users");
-    let logSheet = SpreadsheetApp.getActive().getSheetByName("user log");
-    let log = logSheet.getDataRange().getValues().slice(1);
-    let onlineUsers = sheet.getDataRange().getValues().slice(1).reverse();
+    const sheet = SpreadsheetApp.getActive().getSheetByName("current users");
+    const logSheet = SpreadsheetApp.getActive().getSheetByName("user log");
+    const log = logSheet.getDataRange().getValues().slice(1);
+    const onlineUsers = sheet.getDataRange().getValues().slice(1).reverse();
     function update(log: any[]) {
         logSheet.getRange(2, 1, log.length, log[0].length).setValues(log);
     };
@@ -39,29 +40,29 @@ function logUsers() {
     update(log);
 }
 
-function isTriggerEnable() {
-    let propertySheet = SpreadsheetApp.getActive().getSheetByName("bot property");
-    let botLogSheet = SpreadsheetApp.getActive().getSheetByName("bot log");
-    let botLog = botLogSheet.getDataRange().getValues().slice(1);
+export function isTriggerEnable() {
+    const propertySheet = SpreadsheetApp.getActive().getSheetByName("bot property");
+    const botLogSheet = SpreadsheetApp.getActive().getSheetByName("bot log");
+    const botLog = botLogSheet.getDataRange().getValues().slice(1);
 
-    let lastDateRow = botLog[botLog.length - 1];
+    const lastDateRow = botLog[botLog.length - 1];
     if (!lastDateRow) {
         return true;
     };
-    let lastDateStr = botLog[botLog.length - 1][0];
-    let lastDate = new Date(lastDateStr);
-    let holdTime = new Date(propertySheet.getRange(1, 4, 2, 1).getValues()[1][0]);
-    let epoch = new Date("Dec 30 1899 00:00:00");
-    let holdTimeMiliSec = holdTime.valueOf() - epoch.valueOf();
-    let delta = Date.now().valueOf() - lastDate.valueOf();
+    const lastDateStr = botLog[botLog.length - 1][0];
+    const lastDate = new Date(lastDateStr);
+    const holdTime = new Date(propertySheet.getRange(1, 4, 2, 1).getValues()[1][0]);
+    const epoch = new Date("Dec 30 1899 00:00:00");
+    const holdTimeMiliSec = holdTime.valueOf() - epoch.valueOf();
+    const delta = Date.now().valueOf() - lastDate.valueOf();
 
-    let isTriggerEnable = delta > holdTimeMiliSec;
+    const isTriggerEnable = delta > holdTimeMiliSec;
     return isTriggerEnable;
 }
 
-function foundNewUser() {
-    let logSheet = SpreadsheetApp.getActive().getSheetByName("user log");
-    let log = logSheet.getDataRange().getValues().slice(1);
+export function foundNewUser() {
+    const logSheet = SpreadsheetApp.getActive().getSheetByName("user log");
+    const log = logSheet.getDataRange().getValues().slice(1);
     for (let index in log) {
         if (log[index][5]) {
             return true;
@@ -70,38 +71,38 @@ function foundNewUser() {
     return false;
 }
 
-function getOnlineUsers() {
-    let sheet = SpreadsheetApp.getActive().getSheetByName("current users");
+export function getOnlineUsers() {
+    const sheet = SpreadsheetApp.getActive().getSheetByName("current users");
 
-    let statusies = get_local_timeline();
-    let table = statusies.map(
+    const statusies = get_local_timeline();
+    const table = statusies.map(
         (status) => [status.account.acct, status.account.display_name, toJST(status.created_at)]
     );
 
-    let range = sheet.getRange(2, 1, statusies.length, table[0].length);
+    const range = sheet.getRange(2, 1, statusies.length, table[0].length);
     range.setValues(table);
 }
 
 function updateTable(dateStr: string, tableStr: string) {
-    let date = new Date(dateStr);
-    let hours = date.getHours() % 24;
-    let table = tableStr ? JSON.parse(tableStr) : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    const date = new Date(dateStr);
+    const hours = date.getHours() % 24;
+    const table = tableStr ? JSON.parse(tableStr) : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     table[hours] += 1;
     return JSON.stringify(table);
 }
 
-function getBotMessage() {
-    let propertySheet = SpreadsheetApp.getActive().getSheetByName("bot property");
-    let messageSheet = SpreadsheetApp.getActive().getSheetByName("bot message");
-    let messageLines = messageSheet.getDataRange().getValues().slice(1);
-    let greetingTable = propertySheet.getRange(2, 1, 24, 2).getValues();
+export function getBotMessage() {
+    const propertySheet = SpreadsheetApp.getActive().getSheetByName("bot property");
+    const messageSheet = SpreadsheetApp.getActive().getSheetByName("bot message");
+    const messageLines = messageSheet.getDataRange().getValues().slice(1);
+    const greetingTable = propertySheet.getRange(2, 1, 24, 2).getValues();
     let greetingMap: { [key: string]: any } = {};
     for (let index in greetingTable) {
-        const key = new Date(greetingTable[Number(index)][0]).getHours().toString();
-        greetingMap[key] = greetingTable[Number(index)][1];
+        const hour = greetingTable[Number(index)][0];
+        const hourStr = hour.toString();
+        greetingMap[hourStr] = greetingTable[Number(index)][1];
     };
-
-    let greeting = greetingMap[(new Date()).getHours().toString()];
+    const greeting = greetingMap[new Date().getHours()];
     let message = "";
     for (let index in messageLines) {
         message += messageLines[index][1] + "\n";
@@ -110,12 +111,11 @@ function getBotMessage() {
     return message;
 }
 
-function setProcessedDate() {
-    let botLogSheet = SpreadsheetApp.getActive().getSheetByName("bot log");
-    let lastRow = botLogSheet.getLastRow();
-    let range = botLogSheet.getRange(lastRow + 1, 1);
-    let now = new Date();
-    let nowStr = toJST(now.toISOString());
+export function setProcessedDate() {
+    const botLogSheet = SpreadsheetApp.getActive().getSheetByName("bot log");
+    const lastRow = botLogSheet.getLastRow();
+    const range = botLogSheet.getRange(lastRow + 1, 1);
+    const nowStr = toJST(new Date().toISOString());
     range.setValue(nowStr);
 }
 
