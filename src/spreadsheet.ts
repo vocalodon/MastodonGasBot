@@ -86,7 +86,7 @@ export function getOnlineUsers() {
 function updateTable(dateStr: string, tableStr: string) {
     const date = new Date(dateStr);
     const hours = date.getHours() % 24;
-    const table = tableStr ? JSON.parse(tableStr) : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    const table = tableStr ? JSON.parse(tableStr) : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     table[hours] += 1;
     return JSON.stringify(table);
 }
