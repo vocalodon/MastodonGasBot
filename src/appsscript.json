@@ -5,6 +5,11 @@
       "userSymbol": "OAuth2",
       "libraryId": "1B7FSrk5Zi6L1rSxxTDgDEUsPzlukDsi4KGuTMorsTQHhGBzBkMun4iDF",
       "version": "26"
+    }, {
+      "userSymbol": "GASUnit",
+      "libraryId": "1Bnt8-tN4ddGVzXXIkzV_AtuuMzdlmlSyKWO7KS4TAVQYgM2GJT5WC9eU",
+      "version": "14",
+      "developmentMode": true
     }]
   },
   "webapp": {
