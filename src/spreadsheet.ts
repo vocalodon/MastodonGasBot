@@ -91,24 +91,25 @@ function updateTable(dateStr: string, tableStr: string) {
     return JSON.stringify(table);
 }
 
-export function getBotMessage() {
+export function getBotMessage(): { status: string, spoiler_text: string} {
     const propertySheet = SpreadsheetApp.getActive().getSheetByName("bot property");
     const messageSheet = SpreadsheetApp.getActive().getSheetByName("bot message");
     const messageLines = messageSheet.getDataRange().getValues().slice(1);
-    const greetingTable = propertySheet.getRange(2, 1, 24, 2).getValues();
-    let greetingMap: { [key: string]: any } = {};
-    for (let index in greetingTable) {
-        const hour = greetingTable[Number(index)][0];
-        const hourStr = hour.toString();
-        greetingMap[hourStr] = greetingTable[Number(index)][1];
-    };
-    const greeting = greetingMap[new Date().getHours()];
-    let message = "";
+    const messageBack = messageSheet.getDataRange().getBackgrounds().slice(1);
+
+    let payload = { status: "", spoiler_text: ""} ;
+    let spoilerText = "";
+    let status = "";
     for (let index in messageLines) {
-        message += messageLines[index][1] + "\n";
+        let current = messageLines[index][1] + "\n";
+        if (messageBack[index][1] === "#ffffff") {
+            payload["status"] += current;
+        } else {
+            payload["spoiler_text"] += current;
+        }
     };
-    message = greeting + "\n" + message;
-    return message;
+
+    return payload;
 }
 
 export function setProcessedDate() {

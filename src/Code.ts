@@ -3,8 +3,8 @@ import { logUsers, isTriggerEnable, foundNewUser, getBotMessage, setProcessedDat
 function postBotMessage() {
     logUsers();
     if (isTriggerEnable() && foundNewUser()) {
-        let message = getBotMessage();
-        statuses_new_status(message);
+        let payload = getBotMessage();
+        statuses_new_status(payload);
         setProcessedDate();
     }
 }
