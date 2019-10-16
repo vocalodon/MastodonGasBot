@@ -47,7 +47,7 @@ function getOptions(payload:{status:string, spoiler_text:string}) {
     let options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
         "method": "post",
         "headers": headers,
-        "payload": { "status": payload },
+        "payload": payload,
     };
 
     return options;
