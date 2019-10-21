@@ -1,5 +1,6 @@
 import { strict } from "assert";
 import { networkInterfaces } from "os";
+import { ConfigData} from "./sheetData";
 
 export function logUsers() {
     getOnlineUsers();
@@ -49,6 +50,14 @@ export function isTriggerEnable() {
     if (!lastDateRow) {
         return true;
     };
+
+    let configData=new ConfigData("bot property");
+    configData.readData();
+    let configs=configData.configs();
+
+
+
+
     const lastDateStr = botLog[botLog.length - 1][0];
     const lastDate = new Date(lastDateStr);
     const holdTime = new Date(propertySheet.getRange(1, 4, 2, 1).getValues()[1][0]);
@@ -83,7 +92,7 @@ export function getOnlineUsers() {
     range.setValues(table);
 }
 
-function updateTable(dateStr: string, tableStr: string) {
+export function updateTable(dateStr: string, tableStr: string) {
     const date = new Date(dateStr);
     const hours = date.getHours() % 24;
     const table = tableStr ? JSON.parse(tableStr) : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];

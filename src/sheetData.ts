@@ -36,7 +36,7 @@ export class ConfigData extends SheetAsDatabase {
         let rows = [];
         let values = this.values.slice(1);
         for (let row of values) {
-            let cols: { [key: string]: string } = {};
+            let cols: { [key: string]: string | Date | Boolean } = {};
             for (let colIndex in row) {
                 let key = this.colTitles[colIndex];
                 let value = row[colIndex];
