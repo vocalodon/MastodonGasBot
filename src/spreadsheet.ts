@@ -1,5 +1,3 @@
-import { strict } from "assert";
-import { networkInterfaces } from "os";
 import { ConfigData } from "./sheetData";
 
 export function logUsers() {
@@ -65,8 +63,8 @@ export function isTriggerEnable() {
     if (!(holdTime instanceof Date)) {
         return false;
     }
-    const epoch = new Date("Dec 30 1899 00:00:00");
-    const holdTimeMiliSec = holdTime.valueOf() - epoch.valueOf();
+    const epochOfSpreadsheet = new Date("Dec 30 1899 00:00:00");
+    const holdTimeMiliSec = holdTime.valueOf() - epochOfSpreadsheet.valueOf();
     const delta = Date.now().valueOf() - lastDate.valueOf();
 
     const isTriggerEnable = delta > holdTimeMiliSec;

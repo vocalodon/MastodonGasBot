@@ -60,6 +60,37 @@ function test_utils() {
                     assert(configs[0]["hold fire"] === false)
                 }
             }
+        },
+        'timeline': {
+            'getTimelineEntrypoint': {
+                'should return https://vocalodon.net/api/v1/timelines/public?local=true': function () {
+                    const params = {
+                        "local": "true"
+                    };
+                    const url = getTimelineEndpoint("public", params);
+                    assert(url === "https://vocalodon.net/api/v1/timelines/public?local=true");
+                }
+            },
+            'timelines': {
+                'should return status array': function () {
+                    const params = {
+                        "local": "true"
+                    };
+                    const statuses = timelines("public", params);
+                    assert("id" in statuses[0]);
+                }
+            },
+            'get_lopcal_timeline': {
+                'should return stats array': function () {
+                    const statuses = get_local_timeline();
+                    const maxDate = new Date(statuses[0]["created_at"]);
+                    const minDate = new Date(statuses[statuses.length - 1]["created_at"]);
+                    const delta = maxDate.getMilliseconds() - minDate.getMilliseconds();
+                    const range = new Date("Jan 01 1970 01:00:00");
+                    const rangeValue = range.getMilliseconds();
+                    assert(delta > rangeValue);
+                }
+            }
         }
     })
 }
