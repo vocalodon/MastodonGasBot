@@ -1,6 +1,6 @@
 import { strict } from "assert";
 import { networkInterfaces } from "os";
-import { ConfigData} from "./sheetData";
+import { ConfigData } from "./sheetData";
 
 export function logUsers() {
     getOnlineUsers();
@@ -51,16 +51,20 @@ export function isTriggerEnable() {
         return true;
     };
 
-    let configData=new ConfigData("bot property");
+    let configData = new ConfigData("bot property");
     configData.readData();
-    let configs=configData.configs();
+    let configs = configData.configs();
 
-
-
+    const holdFire = configs[0]["hold fire"];
+    if ((typeof holdFire !== "boolean") || holdFire) return false;
 
     const lastDateStr = botLog[botLog.length - 1][0];
     const lastDate = new Date(lastDateStr);
-    const holdTime = new Date(propertySheet.getRange(1, 4, 2, 1).getValues()[1][0]);
+
+    const holdTime = configs[0]["hold time"];
+    if (!(holdTime instanceof Date)) {
+        return false;
+    }
     const epoch = new Date("Dec 30 1899 00:00:00");
     const holdTimeMiliSec = holdTime.valueOf() - epoch.valueOf();
     const delta = Date.now().valueOf() - lastDate.valueOf();
@@ -100,13 +104,13 @@ export function updateTable(dateStr: string, tableStr: string) {
     return JSON.stringify(table);
 }
 
-export function getBotMessage(): { status: string, spoiler_text: string} {
+export function getBotMessage(): { status: string, spoiler_text: string } {
     const propertySheet = SpreadsheetApp.getActive().getSheetByName("bot property");
     const messageSheet = SpreadsheetApp.getActive().getSheetByName("bot message");
     const messageLines = messageSheet.getDataRange().getValues().slice(1);
     const messageBack = messageSheet.getDataRange().getBackgrounds().slice(1);
 
-    let payload = { status: "", spoiler_text: ""} ;
+    let payload = { status: "", spoiler_text: "" };
     let spoilerText = "";
     let status = "";
     for (let index in messageLines) {
